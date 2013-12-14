@@ -120,17 +120,20 @@ __host__ __device__ void indexToMutation(uint8_t *origTmplSeq, int tmplLen, uint
     }
 
     if (mut < 4) {
+        // Insertion, assumes template is padded so that
+        // losing the last base doesn't matter
         mutated[tmpPos] = baseOrd[mut % 4];
         for (int i = tmpPos; i < tmplLen - 1; i++) {
             mutated[i + 1] = origTmplSeq[i];
         }
-        mutated[tmplLen - 1] = '\0';
     } else if (mut >= 4 and mut < 7) {
+        // Substitution
         mutated[tmpPos] = baseOrd[(currentBasePos + ((mut-4+1) % 4)) % 4];
         for (int i = tmpPos + 1; i < tmplLen; i++) {
             mutated[i] = origTmplSeq[i];
         }
     } else {
+        // Deletion
         for (int i = tmpPos + 1; i < tmplLen; i++) {
             mutated[i-1] = origTmplSeq[i];
         }
